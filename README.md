@@ -25,3 +25,6 @@ cd docker-compose
 http://ip:9898
 --------------------------------------------------------------
 ```
+
+## 相關安裝指令(ubuntu)，請參考    
+https://github.com/WilliamFromTW/backrest_docker_yaml_generator/blob/main/(ubuntu)docker_restic.txt
