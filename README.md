@@ -1,4 +1,8 @@
-### 產生 docker Backrest yaml 檔案，及啟動腳本，先自動掛載 cifs、nfs 與 sftp 後，再開啟 Backrest 容器
+### 產生 Backrest yaml 檔，及啟動腳本(先自動掛載 cifs、nfs 與 sftp 後，再開啟 Backrest 容器)
+
+#### prerequisites，先決條件，請參考    
+https://github.com/WilliamFromTW/backrest_docker_yaml_generator/blob/main/(ubuntu)docker_restic.txt
+
 
 #### ubuntu 
 ```
@@ -26,5 +30,3 @@ http://ip:9898
 --------------------------------------------------------------
 ```
 
-## 相關安裝指令(ubuntu)，請參考    
-https://github.com/WilliamFromTW/backrest_docker_yaml_generator/blob/main/(ubuntu)docker_restic.txt
