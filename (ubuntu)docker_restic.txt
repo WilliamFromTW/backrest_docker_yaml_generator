@@ -1,0 +1,60 @@
+
+1.
+ubuntu 26.04
+--
+sudo su -
+apt update
+apt install python3 python3-full  cifs-utils nfs-common fuse openssh-server -y
+systemctl enable ssh
+systemctl start ssh
+
+
+
+2.
+docker  install
+--
+# Add Docker's official GPG key:
+sudo apt update
+sudo apt install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+sudo apt update
+
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# vi /lib/systemd/system/docker.service (change volume directory)
+ExecStart=/usr/bin/dockerd --data-root=/docker -H fd:// --containerd=/run/containerd/containerd.sock
+
+systemctl daemon-reload
+systemctl enable docker
+systemctl restart docker
+
+3.
+mkdir -p /root/backup
+cd /root/backup
+python3 -m venv myenv
+source myenv/bin/activate
+pip install flask ruamel.yaml
+
+python app.py
+chrome browser： http://localhost:5000
+setup source directory to mount ( cift(smb)，nfs )
+docker-compose/start.sh 、shutdown.sh will auto generated
+
+cd docker-compose 
+./startup.sh
+launch docker container : backrest 
+http://localhost:9898
+
