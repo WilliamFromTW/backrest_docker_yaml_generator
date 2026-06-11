@@ -4,7 +4,7 @@ ubuntu 26.04
 --
 sudo su -
 apt update
-apt install python3 python3-full  cifs-utils nfs-common fuse openssh-server -y
+apt install python3 python3-full rclone fuse3 cifs-utils nfs-common fuse openssh-server -y
 systemctl enable ssh
 systemctl start ssh
 
