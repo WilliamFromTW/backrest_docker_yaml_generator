@@ -1,11 +1,14 @@
-### 產生 Backrest yaml 檔，及啟動腳本(先自動掛載 cifs、nfs 與 sftp 後，再開啟 Backrest 容器)
+**English** | [繁體中文](./README.zh-TW.md)
 
-#### prerequisites，先決條件，請參考    
-https://github.com/WilliamFromTW/backrest_docker_yaml_generator/blob/main/(ubuntu)docker_restic.txt
+### Generate Backrest `docker-compose.yml` & Mount Scripts (Auto-mount CIFS/SMB, NFS & Rclone/SFTP before starting the Backrest container)
 
+#### Prerequisites
+Please refer to:
+- [English Guide: `(ubuntu)docker_restic.en.txt`](https://github.com/WilliamFromTW/backrest_docker_yaml_generator/blob/main/(ubuntu)docker_restic.en.txt)
+- [繁體中文說明：`(ubuntu)docker_restic.txt`](https://github.com/WilliamFromTW/backrest_docker_yaml_generator/blob/main/(ubuntu)docker_restic.txt)
 
-#### ubuntu 
-```
+#### Ubuntu Usage
+```bash
 mkdir -p /root/backup
 cd /root/backup
 python3 -m venv myenv
@@ -13,20 +16,29 @@ source myenv/bin/activate
 pip install flask ruamel.yaml
 
 --------------------------------------------------------------
-# setup source directory cifs(smb)，nfs 
+# 1. Start the Web UI to configure source mounts (SMB/CIFS, NFS, Rclone/SFTP)
+#    and host source/destination directories (default: /mnt/source and /mnt/dest)
 python app.py
-chrome browser： http://ip:5000
-# auto generate shell script to mount source and Backrest docker
-docker-compose/start.sh
-docker-compose/shutdown.sh
+# Open in Chrome browser: http://ip:5000
+
+# The following files are automatically generated under docker-compose/:
+# - docker-compose/docker-compose.yml
+# - docker-compose/startup.sh
+# - docker-compose/shutdown.sh
+# - docker-compose/rclone.conf
 --------------------------------------------------------------
 
 --------------------------------------------------------------
-# mount source then launch Backrest docker container
-cd docker-compose 
+# 2. Mount remote sources and launch the Backrest Docker container
+cd docker-compose
 ./startup.sh
-# setup restic repository and backup plan
-http://ip:9898
+
+# 3. Configure Restic repository and backup plans in Backrest WebUI
+# Open in browser: http://ip:9898
+# IMPORTANT (Ref: https://github.com/garethgeorge/backrest):
+# Inside Backrest (http://ip:9898), always use container paths (/data/source and /data/dest)
+# instead of host paths (/mnt/source and /mnt/dest):
+# - Backup source (Plan -> Paths to backup): /data/source/<subfolder_name>
+# - Backup destination / Restore path (Repo / Restore): /data/dest/<subfolder_name>
 --------------------------------------------------------------
 ```
-

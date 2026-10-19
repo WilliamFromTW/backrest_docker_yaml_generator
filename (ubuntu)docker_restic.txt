@@ -1,6 +1,7 @@
+# 語言 / Language: 繁體中文 | English version: (ubuntu)docker_restic.en.txt
 
 1.
-ubuntu 26.04
+ubuntu 26.04 基本套件與環境安裝
 --
 sudo su -
 apt update
@@ -11,16 +12,16 @@ systemctl start ssh
 
 
 2.
-docker  install
+Docker 安裝設定
 --
-# Add Docker's official GPG key:
+# 加入 Docker 官方 GPG 金鑰：
 sudo apt update
 sudo apt install ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-# Add the repository to Apt sources:
+# 將 Docker 套件庫加入 Apt sources：
 sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
 Types: deb
 URIs: https://download.docker.com/linux/ubuntu
@@ -34,7 +35,7 @@ sudo apt update
 
 sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-# vi /lib/systemd/system/docker.service (change volume directory)
+# vi /lib/systemd/system/docker.service (變更 Docker 預設儲存目錄)
 ExecStart=/usr/bin/dockerd --data-root=/docker -H fd:// --containerd=/run/containerd/containerd.sock
 
 systemctl daemon-reload
@@ -42,6 +43,8 @@ systemctl enable docker
 systemctl restart docker
 
 3.
+啟動 backrest docker 產生器與 Backrest 容器
+--
 mkdir -p /root/backup
 cd /root/backup
 python3 -m venv myenv
@@ -49,17 +52,17 @@ source myenv/bin/activate
 pip install flask ruamel.yaml
 
 python app.py
-chrome browser： http://localhost:5000
-setup source directory to mount ( cift(smb)，nfs )
-docker-compose/start.sh 、shutdown.sh will auto generated
+# 使用 Chrome 瀏覽器開啟： http://localhost:5000
+# 設定要掛載的遠端來源目錄 (CIFS/SMB、NFS、Rclone/SFTP) 與宿主機來源/目標目錄
+# 系統會自動產生 docker-compose/docker-compose.yml、startup.sh、shutdown.sh、rclone.conf
 
 cd docker-compose 
 ./startup.sh
-launch docker container : backrest 
-http://localhost:9898
+# 自動掛載遠端來源並啟動 Docker 容器：backrest
+# 開啟瀏覽器進入 Backrest： http://localhost:9898
 
 # Backrest 設定說明 (參考官方文件: https://github.com/garethgeorge/backrest )
 # 注意：因為 Backrest 執行於 Docker 容器內，在 http://localhost:9898 介面中設定的備份來源 (source / Plan) 與目標或還原目錄 (dest / Repo / Restore)，
 # 都必須填寫 Docker 容器內的路徑 /data/source 與 /data/dest，而不是宿主機的 /mnt/source、/mnt/dest：
-# - 備份來源 (Plan -> Paths to backup): 請填寫 /data/source/<節點名稱>  (對應宿主機的 /mnt/source/<節點名稱>)
-# - 備份目標 / 本地儲存庫或還原路徑 (Repo / Restore): 請填寫 /data/dest/<子目錄>  (對應宿主機的 /mnt/dest/<子目錄>)
+# - 備份來源 (Plan -> Paths to backup): 請填寫 /data/source/<子目錄名稱>  (對應宿主機的 /mnt/source/<子目錄名稱>)
+# - 備份目標 / 本地儲存庫或還原路徑 (Repo / Restore): 請填寫 /data/dest/<子目錄名稱>  (對應宿主機的 /mnt/dest/<子目錄名稱>)
