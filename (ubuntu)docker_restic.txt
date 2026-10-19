@@ -58,3 +58,8 @@ cd docker-compose
 launch docker container : backrest 
 http://localhost:9898
 
+# Backrest 設定說明 (參考官方文件: https://github.com/garethgeorge/backrest )
+# 注意：因為 Backrest 執行於 Docker 容器內，在 http://localhost:9898 介面中設定的備份來源 (source / Plan) 與目標或還原目錄 (dest / Repo / Restore)，
+# 都必須填寫 Docker 容器內的路徑 /data/source 與 /data/dest，而不是宿主機的 /mnt/source、/mnt/dest：
+# - 備份來源 (Plan -> Paths to backup): 請填寫 /data/source/<節點名稱>  (對應宿主機的 /mnt/source/<節點名稱>)
+# - 備份目標 / 本地儲存庫或還原路徑 (Repo / Restore): 請填寫 /data/dest/<子目錄>  (對應宿主機的 /mnt/dest/<子目錄>)

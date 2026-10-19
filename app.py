@@ -22,20 +22,36 @@ yaml.indent(mapping=2, sequence=4, offset=2)
 # ==========================================
 TRANSLATIONS = {
     'zh': {
-        'title': '備份組態管理中樞',
+        'title': 'backrest docker 產生器',
         'tab_nodes': '遠端節點管理',
         'tab_scripts': '維運腳本 (啟動/停用)',
         'tab_restore': '還原說明 (Restore)',
         'global_settings': '系統全域設定 (Global Settings)',
         'ext_port': '外部 Port:',
-        'global_mount': '宿主機全域掛載根目錄:',
+        'global_mount': '宿主機來源目錄 (/data/source):',
+        'global_dest': '宿主機目標目錄 (/data/dest):',
         'tz_label': '時區 (TZ):',
         'apply_global': '套用全域設定',
-        'hint_global': '💡 提示：修改或刪除節點後，請點擊上方按鈕手動更新實體檔案。新增節點會自動更新。',
+        'hint_global': '💡 提示：新增、修改、刪除節點或套用設定時皆會自動更新 Docker Compose 與腳本檔案；亦可點擊上方按鈕手動重新產生。',
         'add_node': '新增遠端連線節點',
         'cancel_edit': '取消編輯',
+        'btn_examples': '📖 填寫範例說明',
+        'modal_examples_title': '遠端連線節點 (SMB / NFS / Rclone) 填寫範例說明',
+        'modal_close': '關閉視窗',
+        'ex_field': '欄位名稱',
+        'ex_val': '填寫範例',
+        'ex_note': '說明',
+        'ex_smb_title': '1. SMB / CIFS 填寫範例 (Windows 共用資料夾 / NAS)',
+        'ex_smb_desc': '適用於 Windows 芳鄰或 NAS 的 SMB/CIFS 共用目錄（唯讀掛載）。',
+        'ex_nfs_title': '2. NFS 填寫範例 (Linux / NAS NFS Export)',
+        'ex_nfs_desc': '適用於 Linux 或 NAS 匯出的 NFS 目錄（免填帳號密碼，由 NFS 伺服器端 IP 權限控管）。',
+        'ex_rclone_title': '3. Rclone 填寫範例 (SFTP / 雲端儲存)',
+        'ex_rclone_desc': '適用於 SFTP 或各類雲端硬碟（透過 Rclone FUSE 唯讀掛載）。注意：密碼必須填入 rclone obscure 加密後的字串！',
+        'ex_none_needed': '(免填)',
+        'ex_optional_port': '(選填，可留空使用預設值)',
         'protocol': '通訊協定 (Protocol)',
-        'node_name': '連線識別名稱 (作為目錄名)',
+        'node_name': '宿主機掛載子目錄名稱 (對應容器 /data/source/<此名稱>)',
+        'node_name_hint': '宿主機掛載路徑：<code><span class="dyn-host-mount">{mount}</span>/<span class="dyn-node-name">&lt;名稱&gt;</span></code><br>容器內路徑：<code>/data/source/<span class="dyn-node-name">&lt;名稱&gt;</span></code>',
         'desc': '用途說明',
         'desc_ph': '例如：越南廠 SOP 圖檔每日備份',
         'ip': '伺服器 IP / Host',
@@ -51,13 +67,14 @@ TRANSLATIONS = {
         'rclone_args_ph': 'pubkey_file = /path/to/key\nuse_temp_mutime = false',
         'btn_save': '儲存節點資訊',
         'btn_update': '更新節點資訊',
-        'btn_sync_files': '🔄 手動同步設定至檔案',
+        'btn_sync_files': '🔄 產生 Docker Compose 與腳本檔案',
         'list_title': '現有連線節點清單',
         'col_proto': '協定',
         'col_name': '識別名稱',
         'col_ip': '遠端與本地掛載對應',
         'remote_target': '遠端來源',
-        'local_path': '本地掛載點',
+        'local_path': '本地',
+        'container_path': '容器',
         'col_action': '操作',
         'btn_edit': '編輯',
         'btn_delete': '刪除',
@@ -72,17 +89,17 @@ TRANSLATIONS = {
         'btn_copy_script': '複製腳本',
         'btn_copy_yaml': '複製 YAML',
         'copied': '✅ 已複製',
-        'flash_sync_ok': '✅ 實體檔案與腳本已成功同步更新！',
-        'flash_global_db_only': '✅ 全域設定已更新於資料庫！請記得點擊「手動同步設定至檔案」來生效。',
-        'flash_update_db_only': '✅ 節點「{name}」已更新於資料庫！請記得點擊「手動同步設定至檔案」來生效。',
-        'flash_add_ok': '✅ 成功新增節點「{name}」！(實體檔案已自動同步更新)',
+        'flash_sync_ok': '✅ Docker Compose 與腳本檔案已成功產生！',
+        'flash_global_db_only': '✅ 全域設定已更新，並已自動重新產生 Docker Compose 與腳本檔案！',
+        'flash_update_db_only': '✅ 節點「{name}」已更新，並已自動重新產生 Docker Compose 與腳本檔案！',
+        'flash_add_ok': '✅ 成功新增節點「{name}」！(Docker Compose 與腳本檔案已自動更新)',
         'flash_name_err': '❌ 名稱「{name}」重複。',
-        'flash_del_db_only': '🗑️ 節點已從資料庫移除！請點擊「手動同步設定至檔案」來生效。',
+        'flash_del_db_only': '🗑️ 節點已移除，並已自動重新產生 Docker Compose 與腳本檔案！',
         'restore_card_title': 'Backrest 快照還原注意事項',
         'restore_path': '/data/dest/自訂目錄名稱',
         'restore_p1': '還原時請務必指定目標目錄：',
         'restore_p2': '⚠️ 目錄必須為空，否則還原會失敗。',
-        'restore_p3': '還原後檔案位於宿主機 Volume: <code>backrest_data</code>。',
+        'restore_p3': '還原後檔案位於宿主機目標目錄: <code class="dyn-host-dest">{dest}</code>（對應容器內 <code>/data/dest</code>；備份來源則位於宿主機 <code class="dyn-host-mount">{mount}</code>，對應容器內 <code>/data/source</code>）。',
         'obscure_title': 'Rclone 密碼加密教學 (Obscure)',
         'obscure_p1': '若要使用 SFTP 等需要密碼的 Rclone 連線，請在宿主機終端機執行以下 Docker 指令產生加密密碼：',
         'obscure_cmd': "docker run --rm rclone/rclone:latest obscure '您的真實密碼'",
@@ -102,20 +119,36 @@ TRANSLATIONS = {
         'sh_umount_done': '停用與卸載作業已全部完成！'
     },
     'en': {
-        'title': 'Backup Config Hub',
+        'title': 'Backrest Docker Generator',
         'tab_nodes': 'Remote Nodes',
         'tab_scripts': 'Ops Scripts',
         'tab_restore': 'Restore Guide',
         'global_settings': 'Global Settings',
         'ext_port': 'Ext Port:',
-        'global_mount': 'Host Mount Root:',
+        'global_mount': 'Host Source Dir (/data/source):',
+        'global_dest': 'Host Target Dir (/data/dest):',
         'tz_label': 'Timezone (TZ):',
         'apply_global': 'Apply',
-        'hint_global': '💡 Hint: After editing or deleting, click "Sync Config to Files" above. New nodes sync automatically.',
+        'hint_global': '💡 Hint: Docker Compose and script files are auto-generated whenever settings or nodes change. You can also click the button above to regenerate manually.',
         'add_node': 'Add Node',
         'cancel_edit': 'Cancel',
+        'btn_examples': '📖 Input Examples',
+        'modal_examples_title': 'Remote Node (SMB / NFS / Rclone) Input Examples',
+        'modal_close': 'Close',
+        'ex_field': 'Field',
+        'ex_val': 'Example Value',
+        'ex_note': 'Note',
+        'ex_smb_title': '1. SMB / CIFS Example (Windows Share / NAS)',
+        'ex_smb_desc': 'Mounts a remote SMB/CIFS shared folder read-only.',
+        'ex_nfs_title': '2. NFS Example (Linux / NAS NFS Export)',
+        'ex_nfs_desc': 'Mounts an NFS export read-only (no username/password needed; controlled by server export IP rules).',
+        'ex_rclone_title': '3. Rclone Example (SFTP / Cloud Storage)',
+        'ex_rclone_desc': 'Mounts via Rclone FUSE read-only. Note: Password must be obscured using rclone obscure!',
+        'ex_none_needed': '(Not required)',
+        'ex_optional_port': '(Optional, leave blank for default)',
         'protocol': 'Protocol',
-        'node_name': 'Identifier',
+        'node_name': 'Host Mount Subfolder Name (Maps to /data/source/<name>)',
+        'node_name_hint': 'Host Mount: <code><span class="dyn-host-mount">{mount}</span>/<span class="dyn-node-name">&lt;name&gt;</span></code><br>Container Path: <code>/data/source/<span class="dyn-node-name">&lt;name&gt;</span></code>',
         'desc': 'Description',
         'desc_ph': 'e.g., Vietnam factory SOP daily backup',
         'ip': 'Host / IP',
@@ -131,13 +164,14 @@ TRANSLATIONS = {
         'rclone_args_ph': 'use_temp_mutime = false',
         'btn_save': 'Save',
         'btn_update': 'Update',
-        'btn_sync_files': '🔄 Sync Config to Files',
+        'btn_sync_files': '🔄 Generate Docker Compose & Scripts',
         'list_title': 'Existing Nodes',
         'col_proto': 'Proto',
         'col_name': 'Name',
         'col_ip': 'Remote & Local Mappings',
         'remote_target': 'Remote',
-        'local_path': 'Local Mount',
+        'local_path': 'Local',
+        'container_path': 'Container',
         'col_action': 'Actions',
         'btn_edit': 'Edit',
         'btn_delete': 'Delete',
@@ -152,17 +186,17 @@ TRANSLATIONS = {
         'btn_copy_script': 'Copy Script',
         'btn_copy_yaml': 'Copy YAML',
         'copied': '✅ Copied',
-        'flash_sync_ok': '✅ Files and scripts synced successfully!',
-        'flash_global_db_only': '✅ Global settings saved to DB! Please click "Sync Config to Files" to apply.',
-        'flash_update_db_only': '✅ Node "{name}" saved to DB! Please click "Sync Config to Files" to apply.',
-        'flash_add_ok': '✅ Node "{name}" added! (Files auto-synced)',
+        'flash_sync_ok': '✅ Docker Compose and script files generated successfully!',
+        'flash_global_db_only': '✅ Global settings updated and Docker Compose & scripts regenerated!',
+        'flash_update_db_only': '✅ Node "{name}" updated and Docker Compose & scripts regenerated!',
+        'flash_add_ok': '✅ Node "{name}" added! (Docker Compose & scripts auto-generated)',
         'flash_name_err': '❌ Duplicate name "{name}".',
-        'flash_del_db_only': '🗑️ Node removed from DB! Please click "Sync Config to Files" to apply.',
+        'flash_del_db_only': '🗑️ Node removed and Docker Compose & scripts regenerated!',
         'restore_card_title': 'Backrest Restore Guide',
         'restore_path': '/data/dest/custom_folder',
         'restore_p1': 'Specify target path when restoring:',
         'restore_p2': '⚠️ Folder must be empty or new.',
-        'restore_p3': 'Files are stored in <code>backrest_data</code> volume.',
+        'restore_p3': 'Restored files are stored in host target directory: <code class="dyn-host-dest">{dest}</code> (maps to container <code>/data/dest</code>; host source <code class="dyn-host-mount">{mount}</code> maps to container <code>/data/source</code>).',
         'obscure_title': 'Rclone Password Obscuration Guide',
         'obscure_p1': 'To use Rclone connections like SFTP that require a password, run the following Docker command in your host terminal to generate an obscured password:',
         'obscure_cmd': "docker run --rm rclone/rclone:latest obscure 'your_real_password'",
@@ -182,20 +216,36 @@ TRANSLATIONS = {
         'sh_umount_done': 'Stop and unmount operations completed!'
     },
     'vi': {
-        'title': 'Trung tâm Cấu hình Sao lưu',
+        'title': 'Trình tạo Docker Backrest',
         'tab_nodes': 'Quản lý Node Từ xa',
         'tab_scripts': 'Kịch bản Vận hành',
         'tab_restore': 'Hướng dẫn Khôi phục',
         'global_settings': 'Cài đặt Toàn cục (Global)',
         'ext_port': 'Port Ngoài:',
-        'global_mount': 'Đường dẫn Mount:',
+        'global_mount': 'Thư mục Nguồn Host (/data/source):',
+        'global_dest': 'Thư mục Đích Host (/data/dest):',
         'tz_label': 'Múi giờ (TZ):',
         'apply_global': 'Áp dụng',
-        'hint_global': '💡 Sau khi sửa/xóa, hãy nhấp "Đồng bộ cấu hình ra tệp". Thêm mới sẽ tự động đồng bộ.',
+        'hint_global': '💡 Lưu ý: Tệp Docker Compose và kịch bản sẽ tự động cập nhật khi thêm/sửa/xóa. Bạn cũng có thể nhấp nút phía trên để tạo lại thủ công.',
         'add_node': 'Thêm Node',
         'cancel_edit': 'Hủy',
+        'btn_examples': '📖 Ví dụ nhập liệu',
+        'modal_examples_title': 'Hướng dẫn & Ví dụ nhập Node (SMB / NFS / Rclone)',
+        'modal_close': 'Đóng',
+        'ex_field': 'Trường thông tin',
+        'ex_val': 'Ví dụ điền',
+        'ex_note': 'Ghi chú',
+        'ex_smb_title': '1. Ví dụ SMB / CIFS (Thư mục chia sẻ Windows / NAS)',
+        'ex_smb_desc': 'Dùng cho thư mục chia sẻ SMB/CIFS từ Windows hoặc NAS (mount chỉ đọc).',
+        'ex_nfs_title': '2. Ví dụ NFS (Linux / NAS NFS Export)',
+        'ex_nfs_desc': 'Dùng cho thư mục xuất NFS từ Linux hoặc NAS (không cần tài khoản/mật khẩu).',
+        'ex_rclone_title': '3. Ví dụ Rclone (SFTP / Đám mây)',
+        'ex_rclone_desc': 'Dùng cho SFTP hoặc lưu trữ đám mây qua Rclone FUSE. Lưu ý: Mật khẩu phải mã hóa bằng rclone obscure!',
+        'ex_none_needed': '(Không cần nhập)',
+        'ex_optional_port': '(Tùy chọn, để trống dùng mặc định)',
         'protocol': 'Giao thức',
-        'node_name': 'Tên Định danh',
+        'node_name': 'Tên thư mục con Mount trên Host (Ánh xạ tới /data/source/<tên>)',
+        'node_name_hint': 'Đường dẫn Host: <code><span class="dyn-host-mount">{mount}</span>/<span class="dyn-node-name">&lt;tên&gt;</span></code><br>Đường dẫn Container: <code>/data/source/<span class="dyn-node-name">&lt;tên&gt;</span></code>',
         'desc': 'Mô tả',
         'desc_ph': 'vd: Sao lưu SOP nhà máy Việt Nam',
         'ip': 'IP Máy chủ / Host',
@@ -211,13 +261,14 @@ TRANSLATIONS = {
         'rclone_args_ph': 'use_temp_mutime = false',
         'btn_save': 'Lưu Node',
         'btn_update': 'Cập nhật Node',
-        'btn_sync_files': '🔄 Đồng bộ cấu hình ra tệp',
+        'btn_sync_files': '🔄 Tạo tệp Docker Compose & Kịch bản',
         'list_title': 'Danh sách Node',
         'col_proto': 'Giao thức',
         'col_name': 'Định danh',
         'col_ip': 'Ánh xạ Từ xa & Cục bộ',
         'remote_target': 'Từ xa',
         'local_path': 'Cục bộ',
+        'container_path': 'Container',
         'col_action': 'Thao tác',
         'btn_edit': 'Sửa',
         'btn_delete': 'Xóa',
@@ -232,17 +283,17 @@ TRANSLATIONS = {
         'btn_copy_script': 'Sao chép',
         'btn_copy_yaml': 'Sao chép YAML',
         'copied': '✅ Đã chép',
-        'flash_sync_ok': '✅ Đã đồng bộ các tệp và kịch bản thành công!',
-        'flash_global_db_only': '✅ Cài đặt đã lưu vào DB! Nhấp "Đồng bộ cấu hình ra tệp" để áp dụng.',
-        'flash_update_db_only': '✅ Node "{name}" đã lưu! Nhấp "Đồng bộ cấu hình ra tệp" để áp dụng.',
-        'flash_add_ok': '✅ Đã thêm node "{name}"! (Tự động đồng bộ tệp)',
+        'flash_sync_ok': '✅ Đã tạo tệp Docker Compose và kịch bản thành công!',
+        'flash_global_db_only': '✅ Đã cập nhật cài đặt và tự động tạo lại tệp Docker Compose & kịch bản!',
+        'flash_update_db_only': '✅ Đã cập nhật node "{name}" và tự động tạo lại tệp Docker Compose & kịch bản!',
+        'flash_add_ok': '✅ Đã thêm node "{name}"! (Tự động tạo tệp Docker Compose & kịch bản)',
         'flash_name_err': '❌ Lỗi: Tên "{name}" đã tồn tại.',
-        'flash_del_db_only': '🗑️ Đã xóa node! Nhấp "Đồng bộ cấu hình ra tệp" để áp dụng.',
+        'flash_del_db_only': '🗑️ Đã xóa node và tự động tạo lại tệp Docker Compose & kịch bản!',
         'restore_card_title': 'Lưu ý khi Khôi phục',
         'restore_path': '/data/dest/ten_thu_muc',
         'restore_p1': 'Phải đặt đường dẫn đích thành:',
         'restore_p2': '⚠️ Thư mục này phải trống.',
-        'restore_p3': 'Tệp nằm trên <code>backrest_data</code> volume.',
+        'restore_p3': 'Tệp sau khi khôi phục nằm tại thư mục đích trên host: <code class="dyn-host-dest">{dest}</code> (ánh xạ tới <code>/data/dest</code>; thư mục nguồn host <code class="dyn-host-mount">{mount}</code> ánh xạ tới <code>/data/source</code>).',
         'obscure_title': 'Hướng dẫn Tạo mật khẩu Rclone Obscure',
         'obscure_p1': 'Để sử dụng các kết nối Rclone như SFTP cần mật khẩu, hãy chạy lệnh Docker sau trong terminal của máy chủ để tạo mật khẩu mã hóa:',
         'obscure_cmd': "docker run --rm rclone/rclone:latest obscure 'mat_khau_that_cua_ban'",
@@ -299,6 +350,7 @@ def init_system():
         conn.execute('''CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)''')
         conn.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('ext_port', '9898')")
         conn.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('global_host_mount', '/mnt/source')")
+        conn.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('global_host_dest', '/mnt/dest')")
         conn.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('tz', '')")
     
     if not os.path.exists(RCLONE_FILE):
@@ -316,13 +368,15 @@ def sync_db_to_files(lang=None):
         rows = conn.execute("SELECT * FROM servers").fetchall()
         ext_port = conn.execute("SELECT value FROM settings WHERE key='ext_port'").fetchone()['value']
         global_host_mount = conn.execute("SELECT value FROM settings WHERE key='global_host_mount'").fetchone()['value']
+        dest_row = conn.execute("SELECT value FROM settings WHERE key='global_host_dest'").fetchone()
+        global_host_dest = dest_row['value'] if dest_row else '/mnt/dest'
         tz = conn.execute("SELECT value FROM settings WHERE key='tz'").fetchone()
         tz_val = tz['value'] if tz else ""
 
     # 1. YAML (加入 profiles: ["manual"], restart: "no", 及 TZ 環境變數)
     if os.path.exists(COMPOSE_FILE):
         with open(COMPOSE_FILE, 'r', encoding='utf-8') as f: compose_data = yaml.load(f) or {}
-    else: compose_data = {'version': '3.8', 'services': {}, 'volumes': {}}
+    else: compose_data = {'version': '3.8', 'services': {}}
     
     compose_data.setdefault('services', {})
     
@@ -332,7 +386,7 @@ def sync_db_to_files(lang=None):
         'restart': 'no',  
         'profiles': ['manual'],
         'ports': [f"{ext_port}:9898"],
-        'volumes': ['./backrest_config:/config', 'backrest_data:/data/dest', f"{global_host_mount}:/data/source:ro"]
+        'volumes': ['./backrest_config:/config', f"{global_host_dest}:/data/dest", f"{global_host_mount}:/data/source:ro"]
     }
     
     if tz_val.strip():
@@ -340,7 +394,11 @@ def sync_db_to_files(lang=None):
 
     compose_data['services']['backrest'] = backrest_config
     
-    compose_data.setdefault('volumes', {})['backrest_data'] = None
+    if 'volumes' in compose_data:
+        if isinstance(compose_data['volumes'], dict):
+            compose_data['volumes'].pop('backrest_data', None)
+        if not compose_data['volumes']:
+            del compose_data['volumes']
     with open(COMPOSE_FILE, 'w', encoding='utf-8') as f: yaml.dump(compose_data, f)
 
     # 2. rclone.conf
@@ -386,13 +444,14 @@ def sync_db_to_files(lang=None):
     startup.extend([
         f'echo "{t["sh_mount_done"]}"\n',
         f'echo "{t["sh_start_svc"]}"',
+        f'sudo mkdir -p {global_host_dest}',
         'docker compose --profile manual up -d',
         f'echo "{t["sh_svc_done"]}"'
     ])
     shutdown.append(f'echo "{t["sh_umount_done"]}"')
 
-    with open(STARTUP_FILE, 'w') as f: f.write("\n".join(startup))
-    with open(SHUTDOWN_FILE, 'w') as f: f.write("\n".join(shutdown))
+    with open(STARTUP_FILE, 'w', encoding='utf-8') as f: f.write("\n".join(startup))
+    with open(SHUTDOWN_FILE, 'w', encoding='utf-8') as f: f.write("\n".join(shutdown))
     os.chmod(STARTUP_FILE, 0o755)
     os.chmod(SHUTDOWN_FILE, 0o755)
 
@@ -410,7 +469,7 @@ HTML_TEMPLATE = """
     <style>
         :root { --bg: #f9f9f8; --card: #fff; --text: #333; --muted: #888; --border: #e5e5e5; --btn: #5c5c5c; --danger: #cc0000; --success: #6b8e23;}
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--bg); color: var(--text); padding: 40px; margin: 0; display: flex; justify-content: center;}
-        .container { width: 100%; max-width: 900px; position: relative; }
+        .container { width: 100%; max-width: 1160px; position: relative; }
         .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
         .tab-btn { background: none; border: none; padding: 10px 20px; font-size: 1.05rem; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; }
         .tab-btn.active { color: var(--text); border-bottom: 2px solid var(--text); font-weight: 500; }
@@ -437,7 +496,24 @@ HTML_TEMPLATE = """
         .copy-btn { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.4); padding: 4px 10px; font-size: 0.8rem; border-radius: 3px; cursor: pointer;}
         .copy-btn:hover { background: rgba(255,255,255,0.3); border-color: #fff; }
         .top-settings-bar { background: #f3f3f3; padding: 15px 20px; border-radius: 4px; margin-bottom: 20px; border: 1px solid var(--border); }
-        .inline-form { display: flex; align-items: center; gap: 15px; }
+        .inline-form { display: flex; flex-direction: column; gap: 12px; }
+        .inline-row { display: flex; flex-wrap: nowrap; align-items: center; gap: 15px; }
+        .inline-row label { display: inline-flex; align-items: center; white-space: nowrap; margin-bottom: 0; }
+        .form-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 20px; }
+        .form-header h2 { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
+        .modal-box { background: var(--card); width: 100%; max-width: 820px; max-height: 85vh; border-radius: 6px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 25px; border-bottom: 1px solid var(--border); background: #f5f6f8; }
+        .modal-header h2 { margin: 0; font-size: 1.15rem; border: none; padding: 0; }
+        .modal-body { padding: 20px 25px; overflow-y: auto; line-height: 1.5; }
+        .ex-section { margin-bottom: 24px; border: 1px solid var(--border); border-radius: 4px; padding: 15px 18px; background: #fafafa; }
+        .ex-section:last-child { margin-bottom: 0; }
+        .ex-section h3 { margin: 0 0 6px 0; font-size: 1.05rem; color: #2c4a7c; }
+        .ex-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; font-size: 0.9rem; }
+        .ex-table th, .ex-table td { border: 1px solid var(--border); padding: 8px 10px; }
+        .ex-table th { background: #f0f2f5; width: 32%; }
+        .ex-code { font-family: monospace; background: #eef2f7; padding: 2px 6px; border-radius: 3px; color: #b52b27; }
     </style>
 </head>
 <body>
@@ -471,15 +547,20 @@ HTML_TEMPLATE = """
             <div class="top-settings-bar">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2 style="border:none; margin:0; font-size:1.1rem;">{{ t.global_settings }}</h2>
-                    <form action="/sync_files" method="POST" style="margin:0;">
+                    <form action="/sync_files" method="POST" style="margin:0;" onsubmit="attachGlobals(this)">
                         <button type="submit" class="btn" style="background: #4a6fa5;">{{ t.btn_sync_files }}</button>
                     </form>
                 </div>
-                <form action="/update_globals" method="POST" class="inline-form">
-                    <label>{{ t.ext_port }} <input type="number" name="ext_port" value="{{ ext_port }}" style="width:80px; padding:6px; margin-left:5px;" required></label>
-                    <label>{{ t.global_mount }} <input type="text" name="global_host_mount" value="{{ global_host_mount }}" style="width:160px; padding:6px; margin-left:5px;" required></label>
-                    <label>{{ t.tz_label }} <input type="text" name="tz" value="{{ tz }}" style="width:120px; padding:6px; margin-left:5px;" placeholder="Asia/Taipei"></label>
-                    <button type="submit" class="btn btn-small">{{ t.apply_global }}</button>
+                <form action="/update_globals" method="POST" class="inline-form" id="globalForm">
+                    <div class="inline-row">
+                        <label>{{ t.ext_port }} <input type="number" name="ext_port" id="g_ext_port" value="{{ ext_port }}" oninput="syncDynamicPaths()" onchange="autoSaveGlobals()" style="width:75px; padding:6px; margin-left:5px;" required></label>
+                        <label>{{ t.global_mount }} <input type="text" name="global_host_mount" id="g_host_mount" value="{{ global_host_mount }}" oninput="syncDynamicPaths()" onchange="autoSaveGlobals()" style="width:140px; padding:6px; margin-left:5px;" required></label>
+                        <label>{{ t.global_dest }} <input type="text" name="global_host_dest" id="g_host_dest" value="{{ global_host_dest }}" oninput="syncDynamicPaths()" onchange="autoSaveGlobals()" style="width:140px; padding:6px; margin-left:5px;" required></label>
+                    </div>
+                    <div class="inline-row">
+                        <label>{{ t.tz_label }} <input type="text" name="tz" id="g_tz" value="{{ tz }}" onchange="autoSaveGlobals()" style="width:140px; padding:6px; margin-left:5px;" placeholder="Asia/Taipei"></label>
+                        <button type="submit" class="btn btn-small">{{ t.apply_global }}</button>
+                    </div>
                 </form>
                 <div style="font-size: 0.85rem; color: var(--muted); margin-top: 10px;">{{ t.hint_global }}</div>
             </div>
@@ -487,9 +568,12 @@ HTML_TEMPLATE = """
             <div class="card" id="formCard">
                 <div class="form-header">
                     <h2 id="formTitle">{{ t.add_node }}</h2>
-                    <button type="button" class="btn btn-small" style="display:none;" id="btnCancelEdit" onclick="resetForm()">{{ t.cancel_edit }}</button>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button type="button" class="btn btn-small" style="background: #4a6fa5;" onclick="openExampleModal()">{{ t.btn_examples }}</button>
+                        <button type="button" class="btn btn-small" style="display:none;" id="btnCancelEdit" onclick="resetForm()">{{ t.cancel_edit }}</button>
+                    </div>
                 </div>
-                <form action="/save" method="POST" id="configForm">
+                <form action="/save" method="POST" id="configForm" onsubmit="attachGlobals(this)">
                     <input type="hidden" name="id" id="f_id">
                     
                     <div class="grid">
@@ -503,7 +587,8 @@ HTML_TEMPLATE = """
                         </div>
                         <div class="form-group">
                             <label>{{ t.node_name }}</label>
-                            <input type="text" name="name" id="f_name" required>
+                            <input type="text" name="name" id="f_name" oninput="syncDynamicPaths()" required>
+                            <small style="color:var(--muted); display:block; margin-top:5px; line-height:1.6;">{{ t.node_name_hint.format(mount=global_host_mount) | safe }}</small>
                         </div>
                     </div>
                     
@@ -568,7 +653,7 @@ HTML_TEMPLATE = """
                             <td><strong>{{ item.name }}</strong><br><small style="color:var(--muted);">{{ item.description }}</small></td>
                             <td>
                                 <div style="margin-bottom: 4px;"><span style="color:var(--muted); font-size:0.8rem;">{{ t.remote_target }}:</span> {{ item.server_ip or '-' }}{% if item.port %}:{{ item.port }}{% endif %}/{{ item.remote_path }}</div>
-                                <div><span style="color:var(--muted); font-size:0.8rem;">{{ t.local_path }}:</span> {{ global_host_mount }}/{{ item.name }}</div>
+                                <div style="white-space: nowrap;"><span style="color:var(--muted); font-size:0.8rem;">{{ t.local_path }}:</span> <span class="dyn-host-mount">{{ global_host_mount }}</span>/{{ item.name }} -&gt; <span style="color:var(--muted); font-size:0.8rem;">{{ t.container_path }}：</span>/data/source/{{ item.name }}</div>
                             </td>
                             <td>
                                 <button class="btn" style="padding:4px 8px; font-size:0.8rem;" onclick='edit({{ item | tojson | safe }})'>{{ t.btn_edit }}</button>
@@ -609,7 +694,7 @@ HTML_TEMPLATE = """
                 <p>{{ t.restore_p1 }}</p>
                 <div class="code-wrapper"><pre style="color: #a6e22e; font-weight: bold; font-size: 1.05rem;">{{ t.restore_path }}</pre></div>
                 <p style="margin-top: 15px;">{{ t.restore_p2 | safe }}</p>
-                <p>{{ t.restore_p3 | safe }}</p>
+                <p>{{ t.restore_p3.format(dest=global_host_dest, mount=global_host_mount) | safe }}</p>
             </div>
             
             <div class="card" style="line-height: 1.6;">
@@ -624,8 +709,151 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
+    <div id="exampleModal" class="modal-overlay" onclick="if(event.target===this) closeExampleModal()">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>{{ t.modal_examples_title }}</h2>
+                <button type="button" class="btn btn-small" onclick="closeExampleModal()">{{ t.modal_close }} ✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="ex-section">
+                    <h3>{{ t.ex_smb_title }}</h3>
+                    <div style="color: var(--muted); font-size: 0.9rem;">{{ t.ex_smb_desc }}</div>
+                    <table class="ex-table">
+                        <thead><tr><th>{{ t.ex_field }}</th><th>{{ t.ex_val }}</th></tr></thead>
+                        <tbody>
+                            <tr><td>{{ t.protocol }}</td><td><span class="ex-code">SMB / CIFS</span></td></tr>
+                            <tr><td>{{ t.node_name }}</td><td><span class="ex-code">nas_smb</span> (<code><span class="dyn-host-mount">{{ global_host_mount }}</span>/nas_smb</code> &rarr; <code>/data/source/nas_smb</code>)</td></tr>
+                            <tr><td>{{ t.desc }}</td><td>{{ t.desc_ph }}</td></tr>
+                            <tr><td>{{ t.ip }}</td><td><span class="ex-code">192.168.1.100</span></td></tr>
+                            <tr><td>{{ t.port }}</td><td><span class="ex-code">445</span> {{ t.ex_optional_port }}</td></tr>
+                            <tr><td>{{ t.remote_path }}</td><td><span class="ex-code">SharedFolder/SOP</span></td></tr>
+                            <tr><td>{{ t.username }} / {{ t.password }}</td><td><span class="ex-code">backup_user</span> / <span class="ex-code">PlainTextPassword</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="ex-section">
+                    <h3>{{ t.ex_nfs_title }}</h3>
+                    <div style="color: var(--muted); font-size: 0.9rem;">{{ t.ex_nfs_desc }}</div>
+                    <table class="ex-table">
+                        <thead><tr><th>{{ t.ex_field }}</th><th>{{ t.ex_val }}</th></tr></thead>
+                        <tbody>
+                            <tr><td>{{ t.protocol }}</td><td><span class="ex-code">NFS</span></td></tr>
+                            <tr><td>{{ t.node_name }}</td><td><span class="ex-code">linux_nfs</span> (<code><span class="dyn-host-mount">{{ global_host_mount }}</span>/linux_nfs</code> &rarr; <code>/data/source/linux_nfs</code>)</td></tr>
+                            <tr><td>{{ t.desc }}</td><td>Linux Server NFS Backup</td></tr>
+                            <tr><td>{{ t.ip }}</td><td><span class="ex-code">192.168.1.200</span></td></tr>
+                            <tr><td>{{ t.port }}</td><td><span class="ex-code">2049</span> {{ t.ex_optional_port }}</td></tr>
+                            <tr><td>{{ t.remote_path }}</td><td><span class="ex-code">/volume1/data</span></td></tr>
+                            <tr><td>{{ t.username }} / {{ t.password }}</td><td>{{ t.ex_none_needed }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="ex-section">
+                    <h3>{{ t.ex_rclone_title }}</h3>
+                    <div style="color: var(--muted); font-size: 0.9rem;">{{ t.ex_rclone_desc }}</div>
+                    <table class="ex-table">
+                        <thead><tr><th>{{ t.ex_field }}</th><th>{{ t.ex_val }}</th></tr></thead>
+                        <tbody>
+                            <tr><td>{{ t.protocol }}</td><td><span class="ex-code">Rclone (Cloud/SFTP)</span></td></tr>
+                            <tr><td>{{ t.node_name }}</td><td><span class="ex-code">remote_sftp</span> (<code><span class="dyn-host-mount">{{ global_host_mount }}</span>/remote_sftp</code> &rarr; <code>/data/source/remote_sftp</code>)</td></tr>
+                            <tr><td>{{ t.desc }}</td><td>Ubuntu SFTP Server Backup</td></tr>
+                            <tr><td>{{ t.ip }} / {{ t.port }}</td><td><span class="ex-code">192.168.1.50</span> / <span class="ex-code">22</span></td></tr>
+                            <tr><td>{{ t.remote_path }}</td><td><span class="ex-code">/home/ubuntu/backup_data</span></td></tr>
+                            <tr><td>{{ t.username }}</td><td><span class="ex-code">ubuntu</span></td></tr>
+                            <tr><td>{{ t.password }}</td><td><span class="ex-code">v1M_xxxxxx...</span> (<code>{{ t.obscure_cmd }}</code>)</td></tr>
+                            <tr><td>{{ t.rclone_type }}</td><td><span class="ex-code">sftp</span></td></tr>
+                            <tr><td>{{ t.rclone_args }}</td><td><span class="ex-code">use_temp_mutime = false</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let currentScriptMount = {{ global_host_mount | tojson }};
+        let currentScriptDest = {{ global_host_dest | tojson }};
+        let currentScriptPort = {{ ext_port | tojson }};
+
+        function syncDynamicPaths() {
+            const mountInput = document.getElementById('g_host_mount');
+            const destInput = document.getElementById('g_host_dest');
+            const portInput = document.getElementById('g_ext_port');
+            const nameInput = document.getElementById('f_name');
+            const mountVal = ((mountInput && mountInput.value.trim()) ? mountInput.value.trim().replace(/[/]+$/, '') : '/mnt/source') || '/';
+            const destVal = ((destInput && destInput.value.trim()) ? destInput.value.trim().replace(/[/]+$/, '') : '/mnt/dest') || '/';
+            const portVal = (portInput && portInput.value.trim()) ? portInput.value.trim() : currentScriptPort;
+            const nameVal = (nameInput && nameInput.value.trim()) ? nameInput.value.trim() : '<name>';
+
+            document.querySelectorAll('.dyn-host-mount').forEach(el => { el.textContent = mountVal; });
+            document.querySelectorAll('.dyn-host-dest').forEach(el => { el.textContent = destVal; });
+            document.querySelectorAll('.dyn-node-name').forEach(el => { el.textContent = nameVal; });
+
+            const codeYaml = document.getElementById('code-yaml');
+            if (codeYaml) {
+                codeYaml.textContent = codeYaml.textContent
+                    .split(currentScriptDest + ':/data/dest').join(destVal + ':/data/dest')
+                    .split(currentScriptMount + ':/data/source:ro').join(mountVal + ':/data/source:ro')
+                    .split(currentScriptPort + ':9898').join(portVal + ':9898');
+            }
+            const codeStartup = document.getElementById('code-startup');
+            if (codeStartup) {
+                codeStartup.textContent = codeStartup.textContent
+                    .split('sudo mkdir -p ' + currentScriptDest).join('sudo mkdir -p ' + destVal)
+                    .split(currentScriptMount + '/').join(mountVal + '/');
+            }
+            const codeShutdown = document.getElementById('code-shutdown');
+            if (codeShutdown) {
+                codeShutdown.textContent = codeShutdown.textContent
+                    .split(currentScriptMount + '/').join(mountVal + '/');
+            }
+            currentScriptMount = mountVal;
+            currentScriptDest = destVal;
+            currentScriptPort = portVal;
+        }
+
+        function autoSaveGlobals() {
+            syncDynamicPaths();
+            const gForm = document.getElementById('globalForm');
+            if (gForm) {
+                fetch('/update_globals', {
+                    method: 'POST',
+                    body: new FormData(gForm),
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+            }
+        }
+
+        function attachGlobals(targetForm) {
+            ['ext_port', 'global_host_mount', 'global_host_dest', 'tz'].forEach(key => {
+                const src = document.querySelector('#globalForm [name="' + key + '"]');
+                if (!src) return;
+                let hidden = targetForm.querySelector('input[type="hidden"][name="' + key + '"]');
+                if (!hidden) {
+                    hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = key;
+                    targetForm.appendChild(hidden);
+                }
+                hidden.value = src.value;
+            });
+        }
+
+        function openExampleModal() {
+            syncDynamicPaths();
+            document.getElementById('exampleModal').classList.add('active');
+        }
+        function closeExampleModal() {
+            document.getElementById('exampleModal').classList.remove('active');
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeExampleModal();
+        });
+
         function openTab(name, btn) {
+            syncDynamicPaths();
             document.querySelectorAll('.tab-content').forEach(d => d.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(name).classList.add('active');
@@ -676,6 +904,7 @@ HTML_TEMPLATE = """
             document.getElementById('f_rargs').value = d.rclone_args || '';
             
             toggleUI();
+            syncDynamicPaths();
             
             document.getElementById('formTitle').innerText = '{{ t.btn_edit }}：' + d.name;
             document.getElementById('btnSubmit').innerText = '{{ t.btn_update }}';
@@ -690,6 +919,7 @@ HTML_TEMPLATE = """
             document.getElementById('btnSubmit').innerText = '{{ t.btn_save }}';
             document.getElementById('btnCancel').style.display = 'none';
             toggleUI();
+            syncDynamicPaths();
         }
 
         function copyCode(btn, id) {
@@ -710,10 +940,24 @@ HTML_TEMPLATE = """
         }
 
         toggleUI();
+        syncDynamicPaths();
     </script>
 </body>
 </html>
 """
+
+def persist_globals_from_form():
+    if 'global_host_mount' not in request.form and 'global_host_dest' not in request.form:
+        return
+    host_mount = (request.form.get('global_host_mount') or '/mnt/source').strip().rstrip('/') or '/'
+    host_dest = (request.form.get('global_host_dest') or '/mnt/dest').strip().rstrip('/') or '/'
+    ext_port = (request.form.get('ext_port') or '9898').strip()
+    tz_val = request.form.get('tz', '').strip()
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("UPDATE settings SET value=? WHERE key='ext_port'", (ext_port,))
+        conn.execute("UPDATE settings SET value=? WHERE key='global_host_mount'", (host_mount,))
+        conn.execute("UPDATE settings SET value=? WHERE key='global_host_dest'", (host_dest,))
+        conn.execute("UPDATE settings SET value=? WHERE key='tz'", (tz_val,))
 
 @app.route('/')
 def index():
@@ -723,12 +967,14 @@ def index():
         servers = [dict(r) for r in conn.execute("SELECT * FROM servers ORDER BY id DESC")]
         ext_port = conn.execute("SELECT value FROM settings WHERE key='ext_port'").fetchone()['value']
         global_mount = conn.execute("SELECT value FROM settings WHERE key='global_host_mount'").fetchone()['value']
+        dest_setting = conn.execute("SELECT value FROM settings WHERE key='global_host_dest'").fetchone()
+        global_dest = dest_setting['value'] if dest_setting else '/mnt/dest'
         tz_setting = conn.execute("SELECT value FROM settings WHERE key='tz'").fetchone()
         tz_val = tz_setting['value'] if tz_setting else ""
     
-    def read_f(p): return open(p).read() if os.path.exists(p) else ""
+    def read_f(p): return open(p, 'r', encoding='utf-8').read() if os.path.exists(p) else ""
     return render_template_string(HTML_TEMPLATE, servers=servers, lang=lang, t=t, 
-                                  ext_port=ext_port, global_host_mount=global_mount, tz=tz_val,
+                                  ext_port=ext_port, global_host_mount=global_mount, global_host_dest=global_dest, tz=tz_val,
                                   startup_content=read_f(STARTUP_FILE), 
                                   shutdown_content=read_f(SHUTDOWN_FILE),
                                   compose_content=read_f(COMPOSE_FILE))
@@ -742,6 +988,7 @@ def change_lang():
 @app.route('/sync_files', methods=['POST'])
 def sync_files():
     t = TRANSLATIONS.get(get_locale(), TRANSLATIONS['zh'])
+    persist_globals_from_form()
     sync_db_to_files()
     flash(t['flash_sync_ok'])
     return redirect('/')
@@ -749,18 +996,17 @@ def sync_files():
 @app.route('/update_globals', methods=['POST'])
 def update_globals():
     t = TRANSLATIONS.get(get_locale(), TRANSLATIONS['zh'])
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("UPDATE settings SET value=? WHERE key='ext_port'", (request.form.get('ext_port'),))
-        conn.execute("UPDATE settings SET value=? WHERE key='global_host_mount'", (request.form.get('global_host_mount').rstrip('/'),))
-        conn.execute("UPDATE settings SET value=? WHERE key='tz'", (request.form.get('tz', '').strip(),))
-    
-    # 僅寫入資料庫，不自動更新檔案
+    persist_globals_from_form()
+    sync_db_to_files()
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return ('', 204)
     flash(t['flash_global_db_only'])
     return redirect('/')
 
 @app.route('/save', methods=['POST'])
 def save():
     t = TRANSLATIONS.get(get_locale(), TRANSLATIONS['zh'])
+    persist_globals_from_form()
     port_val = request.form.get('port')
     
     data = {
@@ -772,18 +1018,24 @@ def save():
         'port': int(port_val) if port_val and port_val.isdigit() else 0
     }
     
+    saved_ok = False
+    is_update = bool(data['id'])
     with sqlite3.connect(DB_PATH) as conn:
         try:
-            if data['id']:
+            if is_update:
                 conn.execute("UPDATE servers SET proto=:proto, name=:name, description=:description, server_ip=:server_ip, remote_path=:remote_path, username=:username, password=:password, rclone_type=:rclone_type, rclone_args=:rclone_args, port=:port WHERE id=:id", data)
-                flash(t['flash_update_db_only'].format(name=data['name']))
             else:
                 conn.execute("INSERT INTO servers (proto, name, description, server_ip, remote_path, username, password, rclone_type, rclone_args, port) VALUES (:proto, :name, :description, :server_ip, :remote_path, :username, :password, :rclone_type, :rclone_args, :port)", data)
-                # 新增節點時，自動觸發同步更新實體檔案
-                sync_db_to_files()
-                flash(t['flash_add_ok'].format(name=data['name']))
+            saved_ok = True
         except sqlite3.IntegrityError:
             flash(t['flash_name_err'].format(name=data['name']), 'error')
+            
+    if saved_ok:
+        sync_db_to_files()
+        if is_update:
+            flash(t['flash_update_db_only'].format(name=data['name']))
+        else:
+            flash(t['flash_add_ok'].format(name=data['name']))
             
     return redirect('/')
 
@@ -793,7 +1045,7 @@ def delete(record_id):
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("DELETE FROM servers WHERE id=?", (record_id,))
         
-    # 僅寫入資料庫，不自動更新檔案
+    sync_db_to_files()
     flash(t['flash_del_db_only'])
     return redirect('/')
 
